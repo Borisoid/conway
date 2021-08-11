@@ -170,7 +170,7 @@ if __name__ == '__main__':
 
         checked_cells_old = checked_cells.copy()
         checked_cells.clear()
-        grid = tick_grid(
+        tick_grid(
             live_cells_this_tick, live_cells_next_tick, checked_cells,
             standard_rule, torus_grid_lookup
         )
