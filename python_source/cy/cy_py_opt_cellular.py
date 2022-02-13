@@ -10,9 +10,9 @@ FPS = 60
 WIN_WIDTH = 1000
 WIN_HEIGHT = 650
 
-CELLS_ALONG_X = 100
-CELLS_ALONG_Y = 65
-CELLS_SPACE_WIDTH = 1
+CELLS_ALONG_X = 100*5
+CELLS_ALONG_Y = 65*5
+CELLS_SPACE_WIDTH = 0
 CELLS_WIDTH = WIN_WIDTH / CELLS_ALONG_X - CELLS_SPACE_WIDTH
 CELLS_HEIGHT = WIN_HEIGHT / CELLS_ALONG_Y - CELLS_SPACE_WIDTH
 CELLS_X_OFFSET = CELLS_WIDTH + CELLS_SPACE_WIDTH
@@ -79,7 +79,9 @@ def draw_grid(
     pygame.display.update()
 
 
-if __name__ == '__main__':
+def main():
+
+    print()
 
     live_cells = set()
     live_cells_old = set()
@@ -109,5 +111,8 @@ if __name__ == '__main__':
 
 
         clock.tick(1200)
-        print(clock.get_fps())
+        print("\033[F", '{:3.5f}'.format(clock.get_fps()), sep='')
 
+
+if __name__ == '__main__':
+    main()

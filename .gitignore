@@ -1,8 +1,9 @@
 .vscode/
 .idea/
 
-cython_source/*.c
-cython_source/*.html
+build/
+cython_target/
+c_target/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

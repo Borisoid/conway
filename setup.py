@@ -1,10 +1,22 @@
-from setuptools import setup
-from Cython.Build import cythonize
+import sys
+import subprocess
 
 
-setup(
-    ext_modules = (
-        cythonize(["cython_source/cy_cellular.pyx"], build_dir="build", annotate=True) +
-        cythonize(["cython_source/cy_opt_cellular.pyx"], build_dir="build", annotate=True)
-    )
-)
+SS = 'setup_scripts'
+
+
+def main(implementation=None):
+
+    if implementation == 'cy':
+        cmd = ["python", f"{SS}/cy_setup.py", "build_ext", "--build-lib", "cython_target"]
+    elif implementation == 'cy_opt':
+        cmd = ["python", f"{SS}/cy_opt_setup.py", "build_ext", "--build-lib", "cython_target"]
+    else:
+        print('Unknown implementation: ', implementation)
+        exit(0)
+
+    subprocess.run(cmd)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1])

@@ -124,7 +124,9 @@ def tick_grid(grid, rule: T_tick_rule, lookup: T_lookup_strategy):
     return grid_next_tick
 
 
-if __name__ == '__main__':
+def main():
+
+    print()
 
     grid = get_grid(CELLS_ALONG_X, CELLS_ALONG_Y)
     for i in range(10000):
@@ -143,4 +145,9 @@ if __name__ == '__main__':
         grid = tick_grid(grid, standard_rule, torus_grid_lookup)
 
         clock.tick(120)
-        print(clock.get_fps())
+        print("\033[F", '{:3.5f}'.format(clock.get_fps()), sep='')
+
+
+if __name__ == '__main__':
+    main()
+    

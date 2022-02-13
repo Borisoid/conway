@@ -57,7 +57,9 @@ def draw_grid(grid):
     pygame.display.update()
 
 
-if __name__ == '__main__':
+def main():
+
+    print()
 
     grid_next_tick = get_grid(CELLS_ALONG_X, CELLS_ALONG_Y)
     grid = get_grid(CELLS_ALONG_X, CELLS_ALONG_Y)
@@ -80,4 +82,8 @@ if __name__ == '__main__':
         grid, grid_next_tick = grid_next_tick, grid
 
         clock.tick(120)
-        print(clock.get_fps())
+        print("\033[F", '{:3.5f}'.format(clock.get_fps()), sep='')
+
+
+if __name__ == '__main__':
+    main()

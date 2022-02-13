@@ -147,7 +147,9 @@ def tick_grid(
                     live_cells_next_tick.add(live_cell_neighbour)
 
 
-if __name__ == '__main__':
+def main():
+
+    print()
 
     live_cells_this_tick = set()
     live_cells_next_tick = set()
@@ -183,4 +185,9 @@ if __name__ == '__main__':
         
 
         clock.tick(120)
-        print(clock.get_fps())
+        print("\033[F", '{:3.5f}'.format(clock.get_fps()), sep='')
+
+
+if __name__ == '__main__':
+    main()
+    
