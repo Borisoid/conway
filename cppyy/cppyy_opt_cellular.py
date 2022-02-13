@@ -1,4 +1,3 @@
-from test import stopwatch
 from typing import Callable, Iterable, List, Set, Tuple
 import pygame
 import sys
@@ -13,8 +12,8 @@ FPS = 60
 WIN_WIDTH = 1000
 WIN_HEIGHT = 650
 
-CELLS_ALONG_X = 100
-CELLS_ALONG_Y = 65
+CELLS_ALONG_X = 100*2
+CELLS_ALONG_Y = 65*2
 CELLS_SPACE_WIDTH = 1
 CELLS_WIDTH = WIN_WIDTH / CELLS_ALONG_X - CELLS_SPACE_WIDTH
 CELLS_HEIGHT = WIN_HEIGHT / CELLS_ALONG_Y - CELLS_SPACE_WIDTH
@@ -96,6 +95,8 @@ with open('cppyy.cpp', 'r') as f:
 
 if __name__ == '__main__':
 
+    print()
+
     live_cells_this_tick = cppyy.gbl.cell_set()
     live_cells_next_tick = cppyy.gbl.cell_set()
     checked_cells = cppyy.gbl.cell_set()
@@ -128,5 +129,5 @@ if __name__ == '__main__':
         live_cells_this_tick, live_cells_next_tick = live_cells_next_tick, live_cells_this_tick
         live_cells_next_tick.clear()
 
-        clock.tick(120)
-        print(clock.get_fps())
+        clock.tick(300)
+        print("\033[F", '{:3.5f}'.format(clock.get_fps()), sep='')

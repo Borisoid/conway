@@ -28,24 +28,17 @@ struct cell_hasher {
         return ((size_t)c.x << 32) ^ ((size_t)c.y); 
     }
 };
-// struct cell_allocator {
-//     cell* allocate (std::size_t n) {
-//         return (cell*)malloc(n);
-//     };
-//     void deallocate (cell* p, std::size_t n) {
-//         free(p);
-//     };
-// };
 
 typedef std::unordered_set<cell, cell_hasher> cell_set;
 typedef std::list<cell> cell_list;
 typedef bool(*rule)(const bool &, const int &);
-typedef cell_list* (*lookup)(const cell &);
+typedef cell_list*(*lookup)(const cell &);
 
 
-inline int mod(int a, int b) {
-    return (a % b + b) % b;
-}
+#define mod(a, b) ((a % b + b) % b)
+// inline int mod(int a, int b) {
+//     return (a % b + b) % b;
+// }
 
 
 bool standard_rule(const bool &current_state, const int &neighbours) {
@@ -58,10 +51,10 @@ bool standard_rule(const bool &current_state, const int &neighbours) {
     }
 }
 
-cell_list* torus_lookup(const cell &c) {
+cell_list *torus_lookup(const cell &c) {
     int x = c.x;
     int y = c.y;
-    cell_list* list = new cell_list();
+    cell_list *list = new cell_list();
     list->insert(list->end(), cell(mod((x + 0), CELLS_ALONG_X), mod((y - 1), CELLS_ALONG_Y)));  // N
     list->insert(list->end(), cell(mod((x + 1), CELLS_ALONG_X), mod((y - 1), CELLS_ALONG_Y)));  // NE
     list->insert(list->end(), cell(mod((x + 1), CELLS_ALONG_X), mod((y - 0), CELLS_ALONG_Y)));  // E
@@ -81,7 +74,7 @@ void tick_grid(
     lookup lookup_callback
 ) {
     for (auto live_cell : *live_cells_this_tick) {
-        cell_list* live_cell_neighbours = lookup_callback(live_cell);
+        cell_list *live_cell_neighbours = lookup_callback(live_cell);
         for (auto live_cell_neighbour : *live_cell_neighbours) {
             if (checked_cells->find(live_cell_neighbour) == checked_cells->end()) {
                 int live_neighbour_count = 0;
