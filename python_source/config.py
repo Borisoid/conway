@@ -17,7 +17,7 @@ __all__ = (
     'CHECKED_CELL_COLOR',
 )
 
-FPS = 200
+FPS = 1200
 
 WIN_WIDTH = 1000
 WIN_HEIGHT = 650

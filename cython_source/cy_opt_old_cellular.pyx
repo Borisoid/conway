@@ -10,20 +10,16 @@ from libcpp.unordered_set cimport unordered_set
 cdef struct cell:
     int x, y
 
-cdef cppclass cell_comparator:
-    bint compare "operator()"(const cell &c1, const cell &c2) const:
-        return (c1.x == c2.x) and (c1.y == c2.y)
-
-cdef cppclass cell_hasher:
-    size_t hash "operator()"(const cell &c) const:
-        return c.x ^ c.y
-
-
-ctypedef unordered_set[cell, cell_hasher, cell_comparator] cell_set
-ctypedef list[cell] cell_list
+ctypedef unordered_set[long long] cell_set
+ctypedef list[long long] cell_list
 ctypedef bint(*rule)(const bint &, const int &)
 ctypedef cell_list*(*lookup)(const cell &, int, int)
 
+
+cdef inline long long hc(cell c):
+    return (<long long*>&c)[0]
+cdef inline cell c(long long hc):
+    return (<cell*>&hc)[0]
 
 @cython.cdivision(True)
 cdef inline int mod(int a, int n) nogil:
@@ -42,16 +38,16 @@ cdef inline bint standard_rule(const bint &current_state, const int &neighbours)
 cdef cell_list* torus_lookup(const cell &c, int w, int h):
     cdef int x = c.x
     cdef int y = c.y
-    cdef cell_list* out = new cell_list()
-    out[0].push_back(cell(mod((x + 0), w), mod((y - 1), h)))  # N
-    out[0].push_back(cell(mod((x + 1), w), mod((y - 1), h)))  # NE
-    out[0].push_back(cell(mod((x + 1), w), mod((y - 0), h)))  # E
-    out[0].push_back(cell(mod((x + 1), w), mod((y + 1), h)))  # SE
-    out[0].push_back(cell(mod((x + 0), w), mod((y + 1), h)))  # S
-    out[0].push_back(cell(mod((x - 1), w), mod((y + 1), h)))  # SW
-    out[0].push_back(cell(mod((x - 1), w), mod((y - 0), h)))  # W
-    out[0].push_back(cell(mod((x - 1), w), mod((y - 1), h)))  # NW
-    return out
+    cdef cell_list* c_list = new cell_list()
+    c_list[0].push_back(hc(cell(mod((x + 0), w), mod((y - 1), h))))  # N
+    c_list[0].push_back(hc(cell(mod((x + 1), w), mod((y - 1), h))))  # NE
+    c_list[0].push_back(hc(cell(mod((x + 1), w), mod((y - 0), h))))  # E
+    c_list[0].push_back(hc(cell(mod((x + 1), w), mod((y + 1), h))))  # SE
+    c_list[0].push_back(hc(cell(mod((x + 0), w), mod((y + 1), h))))  # S
+    c_list[0].push_back(hc(cell(mod((x - 1), w), mod((y + 1), h))))  # SW
+    c_list[0].push_back(hc(cell(mod((x - 1), w), mod((y - 0), h))))  # W
+    c_list[0].push_back(hc(cell(mod((x - 1), w), mod((y - 1), h))))  # NW
+    return c_list
 
 
 cdef class CLifeEngine:
@@ -79,7 +75,7 @@ cdef class CLifeEngine:
         self.h = h
 
         for live_cell in initial_live_cells:
-            self.live_cells_this_tick[0].insert(cell(live_cell[0], live_cell[1]))
+            self.live_cells_this_tick[0].insert(hc(cell(live_cell[0], live_cell[1])))
 
     def tick(self):
         self._tick()
@@ -88,39 +84,46 @@ cdef class CLifeEngine:
         self.out_checked_cells.clear()
 
         self.live_cells_this_tick[0].clear()
-        for live_cell_next_tick in self.live_cells_next_tick[0]:
+        for h_live_cell_next_tick in self.live_cells_next_tick[0]:
+            live_cell_next_tick = c(h_live_cell_next_tick)
             self.out_live_cells.add((live_cell_next_tick.x, live_cell_next_tick.y))
         self.live_cells_next_tick, self.live_cells_this_tick = self.live_cells_this_tick, self.live_cells_next_tick
 
         self.checked_cells[0].clear()
 
     cdef void _tick(self):
+        cdef long long h_live_cell
+
         cdef cell live_cell
         cdef cell_list* live_cell_neighbours
-        cdef cell live_cell_neighbour
+        cdef long long h_live_cell_neighbour
 
         cdef int live_neighbour_count
         cdef cell_list* cells_to_check
-        cdef cell cell_to_check
+        cdef long long h_c
 
-        for live_cell in self.live_cells_this_tick[0]:
+        cdef long long h_live_cell_next_tick
+        cdef cell live_cell_next_tick
+
+        for h_live_cell in self.live_cells_this_tick[0]:
+            live_cell = c(h_live_cell)
             live_cell_neighbours = self.lookup_callback(live_cell, self.w, self.h)
-            for live_cell_neighbour in live_cell_neighbours[0]:
-                if self.checked_cells[0].count(live_cell_neighbour) == 0:
+            for h_live_cell_neighbour in live_cell_neighbours[0]:
+                if self.checked_cells[0].find(h_live_cell_neighbour) == self.checked_cells[0].end():
                     live_neighbour_count = 0
-                    cells_to_check = self.lookup_callback(live_cell_neighbour, self.w, self.h)
-                    for cell_to_check in cells_to_check[0]:
-                        if self.live_cells_this_tick[0].count(cell_to_check) != 0:
+                    cells_to_check = self.lookup_callback(c(h_live_cell_neighbour), self.w, self.h)
+                    for h_c in cells_to_check[0]:
+                        if self.live_cells_this_tick[0].find(h_c) != self.live_cells_this_tick[0].end():
                             live_neighbour_count += 1
                     del cells_to_check
-                    self.checked_cells[0].insert(live_cell_neighbour)
+                    self.checked_cells[0].insert(h_live_cell_neighbour)
                     if (
                         self.rule_callback(
-                            self.live_cells_this_tick[0].count(live_cell_neighbour) != 0,
+                            self.live_cells_this_tick[0].find(h_live_cell_neighbour) != self.live_cells_this_tick[0].end(),
                             live_neighbour_count
                         )
                     ):
-                        self.live_cells_next_tick[0].insert(live_cell_neighbour)
+                        self.live_cells_next_tick[0].insert(h_live_cell_neighbour)
             del live_cell_neighbours
 
 

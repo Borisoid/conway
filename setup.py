@@ -11,6 +11,10 @@ def main(implementation=None):
         cmd = ["python", f"{SS}/cy_setup.py", "build_ext", "--build-lib", "cython_target"]
     elif implementation == 'cy_opt':
         cmd = ["python", f"{SS}/cy_opt_setup.py", "build_ext", "--build-lib", "cython_target"]
+    elif implementation == 'cy_opt_old':
+        cmd = ["python", f"{SS}/cy_opt_old_setup.py", "build_ext", "--build-lib", "cython_target"]
+    elif implementation == 'pybind11_opt':
+        cmd = ["python", f"{SS}/pybind11_opt_setup.py", "build_ext", "--build-lib", "pybind11_target"]
     else:
         print('Unknown implementation: ', implementation)
         exit(0)

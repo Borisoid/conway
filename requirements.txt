@@ -1,3 +1,9 @@
-setuptools~=47.1.0
-Cython~=0.29.23
-pygame~=2.0.1
+cffi==1.15.0
+cppyy==2.2.0
+cppyy-backend==1.14.7
+cppyy-cling==6.25.2
+CPyCppyy==1.12.8
+Cython==0.29.24
+pybind11==2.9.1
+pycparser==2.21
+pygame==2.0.1
