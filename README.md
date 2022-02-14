@@ -1,7 +1,13 @@
-# Conway's game of life in Python and in Cython
+# Conway's game of life in Python, Cython, C++ (bound to Python with pybind11 || run with cppyy)
 
-`py_cellular.py` and `py_opt_cellular.py` are in pure Python and can be run with only `pygame` installed
+Run like this
+```shell
+python run.py <implementation>
+```
+Check run.py file for implementation options
 
-To run `cy_py_cellular.py` or `cy_py_opt_cellular.py` - cython-accelerated versions - you need to install
-everything listed in  `requirements.txt` and then run `setup.bat` to
-compile cython source and install resulting c-extension
+Some implementations require build first.
+Check setup.py file to see which ones and run
+```shell
+python setup.py <implementation>
+```
