@@ -74,13 +74,8 @@ def main():
     checked_cells = cppyy.gbl.cell_set()
     # checked_cells_old = set()
 
-    for i in range(CELLS_ALONG_X*CELLS_ALONG_Y // 2):
-        cell_set_insert(
-            live_cells_this_tick,
-            (random.randint(0, CELLS_ALONG_X - 1), random.randint(0, CELLS_ALONG_Y - 1))
-        )
-    # for c in ((100, 65), (102, 66), (99, 67), (100, 67), (103, 67), (104, 67), (105, 67),):
-    #     live_cells_this_tick.add(c)
+    for icx, icy in INIT_LIVE_CELLS:
+        cell_set_insert(live_cells_this_tick, (icx, icy))
 
     tick_grid = cppyy.gbl.tick_grid
     rule = cppyy.gbl.standard_rule

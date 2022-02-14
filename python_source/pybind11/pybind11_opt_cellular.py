@@ -62,14 +62,8 @@ def main():
     live_cells_this_tick = set()
     live_cells_next_tick = set()
 
-    for i in range(CELLS_ALONG_X*CELLS_ALONG_Y // 2):
-        live_cells_this_tick.add(
-            cell(random.randint(0, CELLS_ALONG_X - 1), random.randint(0, CELLS_ALONG_Y - 1))
-        )
-    # for x, y in ((100, 65), (102, 66), (99, 67), (100, 67), (103, 67), (104, 67), (105, 67),):
-    #     live_cells_this_tick.add(cell(x, y))
-    # for x, y in [(2, 2), (3, 3), (3, 4), (2, 4), (1, 4)]:
-    #     live_cells_this_tick.add(cell(x, y))
+    for icx, icy in INIT_LIVE_CELLS:
+        live_cells_this_tick.add(cell(icx, icy))
 
 
     engine = LifeEngine(CELLS_ALONG_X, CELLS_ALONG_Y, live_cells_this_tick)

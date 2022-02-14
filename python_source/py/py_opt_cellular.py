@@ -128,13 +128,8 @@ def main():
     checked_cells = set()
     checked_cells_old = set()
 
-    for i in range(CELLS_ALONG_X*CELLS_ALONG_Y // 2):
-        live_cells_this_tick.add(
-            (random.randint(0, CELLS_ALONG_X - 1),
-             random.randint(0, CELLS_ALONG_Y - 1))
-        )
-    # for c in ((100, 65), (102, 66), (99, 67), (100, 67), (103, 67), (104, 67), (105, 67),):
-    #     live_cells_this_tick.add(c)
+    for icx, icy in INIT_LIVE_CELLS:
+        live_cells_this_tick.add((icx, icy))
 
     draw_grid_setup()
     while True:

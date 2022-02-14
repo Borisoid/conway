@@ -60,14 +60,8 @@ def main():
     live_cells = set()
     live_cells_old = set()
 
-    for i in range(CELLS_ALONG_X * CELLS_ALONG_Y // 2):
-        live_cells.add(
-            (random.randint(0, CELLS_ALONG_X - 1),
-             random.randint(0, CELLS_ALONG_Y - 1))
-        )
-    # for c in ((100, 65), (102, 66), (99, 67), (100, 67), (103, 67), (104, 67), (105, 67),):
-    #     live_cells.add(c)
-
+    for icx, icy in INIT_LIVE_CELLS:
+        live_cells.add((icx, icy))
 
     engine = LifeEngine(live_cells, CELLS_ALONG_X, CELLS_ALONG_Y)
     live_cells = engine.out_live_cells

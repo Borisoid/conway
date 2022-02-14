@@ -1,3 +1,7 @@
+import random
+from typing import Set, Tuple
+
+
 __all__ = (
     'FPS',
 
@@ -15,6 +19,8 @@ __all__ = (
     'DEAD_CELL_COLOR',
     'LIVE_CELL_COLOR',
     'CHECKED_CELL_COLOR',
+
+    'INIT_LIVE_CELLS',
 )
 
 FPS = 1200
@@ -22,8 +28,8 @@ FPS = 1200
 WIN_WIDTH = 1000
 WIN_HEIGHT = 650
 
-CELLS_ALONG_X = 100*2
-CELLS_ALONG_Y = 65*2
+CELLS_ALONG_X = 100*4
+CELLS_ALONG_Y = 65*4
 CELLS_SPACE_WIDTH = 0
 CELLS_WIDTH = WIN_WIDTH / CELLS_ALONG_X - CELLS_SPACE_WIDTH
 CELLS_HEIGHT = WIN_HEIGHT / CELLS_ALONG_Y - CELLS_SPACE_WIDTH
@@ -44,3 +50,23 @@ BACKGROUND_COLOR = DARK_DARK_GREY
 DEAD_CELL_COLOR = BLACK
 LIVE_CELL_COLOR = GREEN
 CHECKED_CELL_COLOR = DARK_DARK_GREEN
+
+INIT_LIVE_CELLS: Set[Tuple[int, int]] = set()
+
+
+def pairs(*args):
+    for i in range(0, len(args), 2):
+        yield args[i:i+2]
+
+# random
+for i in range(CELLS_ALONG_X * CELLS_ALONG_Y // 2):
+    INIT_LIVE_CELLS.add((
+        random.randint(0, CELLS_ALONG_X - 1),
+        random.randint(0, CELLS_ALONG_Y - 1),
+    ))
+
+# # acorn
+# INIT_LIVE_CELLS = set(pairs(100, 65, 102, 66, 99, 67, 100, 67, 103, 67, 104, 67, 105, 67))
+
+# # glider
+# INIT_LIVE_CELLS = set(pairs(2,2, 3,3, 3,4, 2,4, 1,4))

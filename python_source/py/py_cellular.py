@@ -104,12 +104,9 @@ def main():
     print()
 
     grid = get_grid(CELLS_ALONG_X, CELLS_ALONG_Y)
-    for i in range(10000):
-        x = random.randint(0, CELLS_ALONG_X - 1)
-        y = random.randint(0, CELLS_ALONG_Y - 1)
-        invert_grid_cells(grid, x, y)
-    # invert_grid_cells(grid, 100, 65, 102, 66, 99, 67, 100, 67, 103, 67, 104, 67, 105, 67)
-    # invert_grid_cells(grid, 50, 40, 52, 41, 49, 42, 50, 42, 53, 42, 54, 42, 55, 42)
+
+    for icx, icy in INIT_LIVE_CELLS:
+        invert_grid_cells(grid, icx, icy)
 
     while True:
         for i in pygame.event.get():
