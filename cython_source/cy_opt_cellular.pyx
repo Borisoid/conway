@@ -31,12 +31,11 @@ cdef inline int mod(int a, int n) nogil:
 
 
 cdef inline bint standard_rule(const bint &current_state, const int &neighbours):
-    if current_state and (neighbours == 2 or neighbours == 3):
+    if neighbours == 3:
         return True
-    elif neighbours == 3:
+    elif current_state and (neighbours == 2):
         return True
-    else:
-        return False
+    return False
 
 
 cdef cell_list* torus_lookup(const cell &c, int w, int h):

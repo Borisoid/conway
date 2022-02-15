@@ -66,20 +66,19 @@ void tick_grid(
     rule rule_callback,
     lookup lookup_callback
 ) {
-    auto live_cell_neighbours = cell_list();  //
-    auto cells_to_check = cell_list();  //
     for (auto live_cell : *live_cells_this_tick) {
+        cell_list live_cell_neighbours;
         lookup_callback(live_cell, live_cell_neighbours);
         for (auto live_cell_neighbour : live_cell_neighbours) {
             if (checked_cells->find(live_cell_neighbour) == checked_cells->end()) {
-                int live_neighbour_count = 0;
+                cell_list cells_to_check;
                 lookup_callback(live_cell_neighbour, cells_to_check);
+                int live_neighbour_count = 0;
                 for (auto c : cells_to_check) {
                     if (live_cells_this_tick->count(c)) {
                         live_neighbour_count++;
                     }
                 }
-                cells_to_check.clear();  //
                 checked_cells->insert(live_cell_neighbour);
                 if (
                     rule_callback(
@@ -91,6 +90,5 @@ void tick_grid(
                 }
             }
         }
-        live_cell_neighbours.clear();  //
     }
 }

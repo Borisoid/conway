@@ -57,15 +57,11 @@ cdef int limited_plane_grid_lookup(bint** grid, int w, int h, int x, int y):
 # tick rules ##################################################################
 
 cdef bint standard_rule(bint current_state, int neighbours):
-    # if cell is alive and has 2-3 live heighbours
-    # it lives to next tick, else it dies
-    if current_state and neighbours in (2, 3):
+    if neighbours == 3:
         return True
-    # if a dead cell has exactly 3 live neighbours it becomes alive
-    elif neighbours == 3:
+    elif current_state and (neighbours == 2):
         return True
-    else:
-        return False
+    return False
 
 # end tick rules ##############################################################
 

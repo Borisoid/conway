@@ -1,57 +1,43 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <cstdio>
 #include <list>
 #include <unordered_set>
+#include <tuple>
 
 
 namespace py = pybind11;
 
 
-struct cell {
-    int x;
-    int y;
-
-    cell(int x, int y) {
-        this->x = x;
-        this->y = y;
+using cell = std::tuple<int32_t, int32_t>;
+struct cell_hasher {
+    std::size_t operator() (const cell &c) const {
+        return ((size_t)std::get<0>(c) << 32) ^ ((size_t)std::get<1>(c)); 
     }
-
-    int operator== (const cell& other) const {
-        return this->x == other.x && this->y == other.y;
-    }
-
-    struct hasher {
-        std::size_t operator() (const cell &c) const {
-            return ((size_t)c.x << 32) ^ ((size_t)c.y); 
-        }
-    };
 };
 
-
-using cell_set = std::unordered_set<cell, cell::hasher>;
+using cell_set = std::unordered_set<cell, cell_hasher>;
 using cell_list = std::list<cell>;
 using rule = bool(*)(const bool &, const int &);
 using lookup = void(*)(int, int, const cell &, cell_list &);
+
 
 
 #define mod(a, b) ((a % b + b) % b)
 
 
 bool standard_rule(const bool &current_state, const int &neighbours) {
-    if (current_state && (neighbours == 2 || neighbours == 3)) {
+    if ( neighbours == 3 ) {
         return true;
-    } else if (neighbours == 3) {
+    } else if (current_state && (neighbours == 2)) {
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 void torus_lookup(int cells_along_x, int cells_along_y, const cell &c, cell_list &out) {
-    int x = c.x;
-    int y = c.y;
+    int x = std::get<0>(c);
+    int y = std::get<1>(c);
     out.push_back(cell(mod(x + 0, cells_along_x), mod(y - 1, cells_along_y)));  // N
     out.push_back(cell(mod(x + 1, cells_along_x), mod(y - 1, cells_along_y)));  // NE
     out.push_back(cell(mod(x + 1, cells_along_x), mod(y - 0, cells_along_y)));  // E
@@ -72,20 +58,19 @@ void tick_grid(
     rule rule_callback,
     lookup lookup_callback
 ) {
-    auto live_cell_neighbours = cell_list();  //
-    auto cells_to_check = cell_list();  //
     for (auto live_cell : *live_cells_this_tick) {
+        cell_list live_cell_neighbours; //
         lookup_callback(cells_along_x, cells_along_y, live_cell, live_cell_neighbours);
         for (auto live_cell_neighbour : live_cell_neighbours) {
             if (!checked_cells->count(live_cell_neighbour)) {
-                int live_neighbour_count = 0;
+                cell_list cells_to_check; //
                 lookup_callback(cells_along_x, cells_along_y, live_cell_neighbour, cells_to_check);
+                int live_neighbour_count = 0;
                 for (auto c : cells_to_check) {
                     if (live_cells_this_tick->count(c)) {
                         live_neighbour_count++;
                     }
                 }
-                cells_to_check.clear();  //
                 checked_cells->insert(live_cell_neighbour);
                 if (
                     rule_callback(
@@ -97,7 +82,6 @@ void tick_grid(
                 }
             }
         }
-        live_cell_neighbours.clear();  //
     }
 }
 
@@ -108,8 +92,8 @@ class LifeEngine {
             this->cells_along_x = cells_along_x;
             this->cells_along_y = cells_along_y;
             live_cells_this_tick = new cell_set(live_cells);
-            live_cells_next_tick = new cell_set();
-            checked_cells = new cell_set();
+            live_cells_next_tick = new cell_set({});
+            checked_cells = new cell_set({});
 
             swap();
         }
@@ -168,9 +152,4 @@ PYBIND11_MODULE(pybind11_opt_cellular, m) {
         .def("tick", &LifeEngine::tick)
         .def("get_live_cells_this_tick", &LifeEngine::get_live_cells_this_tick)
         .def("get_live_cells_next_tick", &LifeEngine::get_live_cells_next_tick);
-        
-    py::class_<cell>(m, "cell")
-        .def(py::init<int, int>())
-        .def_readwrite("x", &cell::x)
-        .def_readwrite("y", &cell::y);
 }

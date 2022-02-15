@@ -35,8 +35,8 @@ def draw_grid_setup():
 
 # noinspection PyTypeChecker
 def draw_grid(
-        live_cells_old: T_cell_set,
-        live_cells: T_cell_set
+    live_cells_old: T_cell_set,
+    live_cells: T_cell_set
 ):
     for x, y in live_cells_old:
         pygame.draw.rect(

@@ -8,7 +8,6 @@ from ..config import *
 
 from pybind11_target.pybind11_opt_cellular import (
     LifeEngine,
-    cell,
 )
 
 
@@ -39,20 +38,29 @@ def draw_grid(
 ):
     dead_cells_new = live_cells_old - live_cells
     live_cells_new = live_cells - live_cells_old
-
-    for c in dead_cells_new:
+    for x, y in dead_cells_new:
         pygame.draw.rect(
             screen, DEAD_CELL_COLOR,
-            (c.x*CELLS_X_OFFSET, c.y*CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+            (x*CELLS_X_OFFSET, y*CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
         )
-
-    for c in live_cells_new:
+    for x, y in live_cells_new:
         pygame.draw.rect(
             screen, LIVE_CELL_COLOR,
-            (c.x*CELLS_X_OFFSET, c.y*CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+            (x*CELLS_X_OFFSET, y*CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
         )
-
     pygame.display.update()
+
+    # for c in live_cells_old:
+    #     pygame.draw.rect(
+    #         screen, DEAD_CELL_COLOR,
+    #         (c.x * CELLS_X_OFFSET, c.y * CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+    #     )
+    # for c in live_cells:
+    #     pygame.draw.rect(
+    #         screen, LIVE_CELL_COLOR,
+    #         (c.x * CELLS_X_OFFSET, c.y * CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+    #     )
+    # pygame.display.update()
 
 
 def main():
@@ -63,7 +71,7 @@ def main():
     live_cells_next_tick = set()
 
     for icx, icy in INIT_LIVE_CELLS:
-        live_cells_this_tick.add(cell(icx, icy))
+        live_cells_this_tick.add((icx, icy))
 
 
     engine = LifeEngine(CELLS_ALONG_X, CELLS_ALONG_Y, live_cells_this_tick)
@@ -75,19 +83,18 @@ def main():
             if i.type == pygame.QUIT:
                 sys.exit()
 
-        engine.tick()
-        live_cells_this_tick = engine.get_live_cells_this_tick()
-        live_cells_next_tick = engine.get_live_cells_next_tick()
+        # engine.tick()
+        # live_cells_this_tick = engine.get_live_cells_this_tick()
+        # live_cells_next_tick = engine.get_live_cells_next_tick()
+        # draw_grid(live_cells_this_tick, live_cells_next_tick)
 
+        engine.tick()
+        live_cells_next_tick = engine.get_live_cells_next_tick()
         draw_grid(live_cells_this_tick, live_cells_next_tick)
+        live_cells_this_tick = live_cells_next_tick
 
         clock.tick(FPS)
         print("\033[F", '{:3.5f}'.format(clock.get_fps()), sep='')
-
-
-if __name__ == '__main__':
-    main()
-
 
 
 if __name__ == '__main__':

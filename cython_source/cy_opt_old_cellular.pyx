@@ -27,12 +27,11 @@ cdef inline int mod(int a, int n) nogil:
 
 
 cdef inline bint standard_rule(const bint &current_state, const int &neighbours):
-    if current_state and (neighbours == 2 or neighbours == 3):
+    if neighbours == 3:
         return True
-    elif neighbours == 3:
+    elif current_state and (neighbours == 2):
         return True
-    else:
-        return False
+    return False
 
 
 cdef cell_list* torus_lookup(const cell &c, int w, int h):
@@ -81,7 +80,7 @@ cdef class CLifeEngine:
         self._tick()
 
         self.out_live_cells.clear()
-        self.out_checked_cells.clear()
+        # self.out_checked_cells.clear()
 
         self.live_cells_this_tick[0].clear()
         for h_live_cell_next_tick in self.live_cells_next_tick[0]:
