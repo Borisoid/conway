@@ -35,22 +35,34 @@ def draw_grid_setup():
 
 # noinspection PyTypeChecker
 def draw_grid(
-        live_cells_old: T_cell_set,
-        live_cells: T_cell_set
+    live_cells_old: T_cell_set,
+    live_cells: T_cell_set
 ):
-    for x, y in live_cells_old:
+    dead_cells_new = live_cells_old - live_cells
+    live_cells_new = live_cells - live_cells_old
+    for x, y in dead_cells_new:
         pygame.draw.rect(
             screen, DEAD_CELL_COLOR,
-            (x * CELLS_X_OFFSET, y * CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+            (x*CELLS_X_OFFSET, y*CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
         )
-
-    for x, y in live_cells:
+    for x, y in live_cells_new:
         pygame.draw.rect(
             screen, LIVE_CELL_COLOR,
-            (x * CELLS_X_OFFSET, y * CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+            (x*CELLS_X_OFFSET, y*CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
         )
-
     pygame.display.update()
+
+    # for x, y in live_cells_old:
+    #     pygame.draw.rect(
+    #         screen, DEAD_CELL_COLOR,
+    #         (x * CELLS_X_OFFSET, y * CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+    #     )
+    # for x, y in live_cells:
+    #     pygame.draw.rect(
+    #         screen, LIVE_CELL_COLOR,
+    #         (x * CELLS_X_OFFSET, y * CELLS_Y_OFFSET, CELLS_WIDTH, CELLS_HEIGHT)
+    #     )
+    # pygame.display.update()
 
 
 def main():
