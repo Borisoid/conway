@@ -22,7 +22,6 @@ using rule = bool(*)(const bool &, const int &);
 using lookup = void(*)(int, int, const cell &, cell_list &);
 
 
-
 #define mod(a, b) ((a % b + b) % b)
 
 
@@ -87,60 +86,64 @@ void tick_grid(
 
 
 class LifeEngine {
-    public:
-        LifeEngine(int cells_along_x, int cells_along_y, const cell_set &live_cells) {
-            this->cells_along_x = cells_along_x;
-            this->cells_along_y = cells_along_y;
-            live_cells_this_tick = new cell_set(live_cells);
-            live_cells_next_tick = new cell_set({});
-            checked_cells = new cell_set({});
+public:
+    LifeEngine(int cells_along_x, int cells_along_y, const cell_set &live_cells) {
+        this->cells_along_x = cells_along_x;
+        this->cells_along_y = cells_along_y;
+        live_cells_this_tick = new cell_set(live_cells);
+        live_cells_next_tick = new cell_set({});
+        checked_cells = new cell_set({});
 
-            swap();
-        }
+        swap();
 
-        ~LifeEngine() {
-            delete live_cells_this_tick;
-            delete live_cells_next_tick;
-            delete checked_cells;
-        }
+        lookup_callback = torus_lookup;
+        rule_callback = standard_rule;
+    }
 
-        void swap() {
-            auto tmp = live_cells_this_tick;
-            live_cells_this_tick = live_cells_next_tick;
-            live_cells_next_tick = tmp;
-        }
+    ~LifeEngine() {
+        delete live_cells_this_tick;
+        delete live_cells_next_tick;
+        delete checked_cells;
+    }
 
-        void tick() {
-            auto rule_callback = standard_rule;
-            auto lookup_callback = torus_lookup;
+    void swap() {
+        auto tmp = live_cells_this_tick;
+        live_cells_this_tick = live_cells_next_tick;
+        live_cells_next_tick = tmp;
+    }
 
-            checked_cells->clear();
+    void tick() {
+        checked_cells->clear();
 
-            cell_set *tmp = live_cells_this_tick;
-            live_cells_this_tick = live_cells_next_tick;
-            live_cells_next_tick = tmp;
-            live_cells_next_tick->clear();
+        cell_set *tmp = live_cells_this_tick;
+        live_cells_this_tick = live_cells_next_tick;
+        live_cells_next_tick = tmp;
+        live_cells_next_tick->clear();
 
-            tick_grid(
-                cells_along_x, cells_along_y,
-                live_cells_this_tick, live_cells_next_tick, checked_cells,
-                rule_callback, lookup_callback
-            );
-        }
+        tick_grid(
+            cells_along_x, cells_along_y,
+            live_cells_this_tick, live_cells_next_tick, checked_cells,
+            rule_callback, lookup_callback
+        );
+    }
 
-        cell_set get_live_cells_this_tick() {
-            return *live_cells_this_tick;
-        }
+    cell_set get_live_cells_this_tick() {
+        return *live_cells_this_tick;
+    }
 
-        cell_set get_live_cells_next_tick() {
-            return *live_cells_next_tick;
-        }
+    cell_set get_live_cells_next_tick() {
+        return *live_cells_next_tick;
+    }
 
-        int cells_along_x;
-        int cells_along_y;
-        cell_set *live_cells_this_tick;
-        cell_set *live_cells_next_tick;
-        cell_set *checked_cells;
+    int cells_along_x;
+    int cells_along_y;
+    
+    cell_set *live_cells_this_tick;
+    cell_set *live_cells_next_tick;
+    cell_set *checked_cells;
+
+    lookup lookup_callback;
+    rule rule_callback;
 };
 
 
