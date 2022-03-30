@@ -10,13 +10,16 @@ namespace py = pybind11;
 
 
 using cell = std::tuple<int32_t, int32_t>;
-struct cell_hasher {
-    std::size_t operator() (const cell &c) const {
-        return ((size_t)std::get<0>(c) << 32) ^ ((size_t)std::get<1>(c)); 
-    }
-};
+namespace std {
+    template <>
+    struct hash<cell> {
+        size_t operator() (const cell &c) const {
+            return ((size_t)std::get<0>(c) << 32) ^ ((size_t)std::get<1>(c)); 
+        }
+    };
+}
 
-using cell_set = std::unordered_set<cell, cell_hasher>;
+using cell_set = std::unordered_set<cell>;
 using cell_list = std::list<cell>;
 using rule = bool(*)(const bool &, const int &);
 using lookup = void(*)(int, int, const cell &, cell_list &);
@@ -91,8 +94,8 @@ public:
         this->cells_along_x = cells_along_x;
         this->cells_along_y = cells_along_y;
         live_cells_this_tick = new cell_set(live_cells);
-        live_cells_next_tick = new cell_set({});
-        checked_cells = new cell_set({});
+        live_cells_next_tick = new cell_set();
+        checked_cells = new cell_set();
 
         swap();
 
@@ -151,8 +154,8 @@ PYBIND11_MODULE(pybind11_opt_cellular, m) {
     m.doc() = "pybind11 example plugin";
 
     py::class_<LifeEngine>(m, "LifeEngine")
-        .def(py::init<int, int, cell_set>())
-        .def("tick", &LifeEngine::tick)
-        .def("get_live_cells_this_tick", &LifeEngine::get_live_cells_this_tick)
-        .def("get_live_cells_next_tick", &LifeEngine::get_live_cells_next_tick);
+    .def(py::init<int, int, cell_set>())
+    .def("tick", &LifeEngine::tick)
+    .def("get_live_cells_this_tick", &LifeEngine::get_live_cells_this_tick)
+    .def("get_live_cells_next_tick", &LifeEngine::get_live_cells_next_tick);
 }
